@@ -47,7 +47,7 @@ int main(void) {
 			_delay_ms(1000);
 		}
 
-		uint8_t avg_t = (uint8_t) accumulated_t / TEMPERATURE_SAMPLES;
+		uint8_t avg_t = accumulated_t / TEMPERATURE_SAMPLES;
 		show_temp(avg_t);
 	}
 }
