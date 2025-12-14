@@ -1,7 +1,7 @@
-#define F_CPU 1000000UL
-
 #include <avr/io.h>                   
 #include <util/delay.h>
+
+#define TEMPERATURE_SAMPLES 10
 
 // ADC1 on PB2
 // Clock on PB3
@@ -19,6 +19,17 @@ void show_temp(uint8_t t) {
 	}
 }
 
+
+uint8_t read_temp() {
+		ADCSRA |= (1<<ADSC);
+		while (ADCSRA & (1<<ADSC));
+
+		uint8_t adc_read = ADCH; // 8 bit read, 1 = 10mV
+		uint8_t temperature = adc_read-50; // 500mV = 0 deg C
+		return temperature;
+}
+
+
 int main(void) {
 	DDRB = (1<<DDB3) | (1<<DDB4);
 
@@ -27,16 +38,16 @@ int main(void) {
 	ADMUX |= (1<<ADLAR); // Left shift to ADCH only
 	ADCSRA = (1<<ADEN) | (1<<ADPS1) | (1<<ADPS0); // Prescaler 8, ADC enabled
 
+	
 	while (1) {
-		// Read temperature from ADC
-		ADCSRA |= (1<<ADSC);
-		while (ADCSRA & (1<<ADSC));
+		uint16_t accumulated_t = 0;
 
-		uint8_t adc_read = ADCH; // 8 bit read, 1 = 10mV
-		uint8_t temperature = adc_read-50; // 500mV = 0 deg C
-		show_temp(temperature);
+		for (uint8_t i = 0; i < TEMPERATURE_SAMPLES; i++) {
+			accumulated_t += read_temp();
+			_delay_ms(1000);
+		}
 
-		// Read and update temperature every 30 seconds.
-		_delay_ms(30000);
+		uint8_t avg_t = (uint8_t) accumulated_t / TEMPERATURE_SAMPLES;
+		show_temp(avg_t);
 	}
 }
