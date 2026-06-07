@@ -1,6 +1,6 @@
 # ATtiny84 Thermometer
 
-A simple thermometer with an ATtiny84 driving two multiplexed seven segment displays.
+A simple thermometer with an ATtiny84 driving two multiplexed seven-segment displays.
 
 The MCU is assumed to be running at 1MHz.
 
