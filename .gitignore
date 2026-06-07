@@ -2,3 +2,8 @@ schematic/Thermometer-backups
 ._*
 *.lck
 *cache
+*.o
+*.hex
+*.
+*.elf
+test

@@ -15,7 +15,7 @@
 #	*MCU is the name of the AVR device to program.
 #	*AVR_PROG is the ISP programmer used to flash the AVR.
 TARGET   = therm
-MCU      = attiny85
+MCU      = attiny84
 AVR_PROG = usbtiny
 
 
@@ -53,12 +53,12 @@ PASSPARAM = -DF_CPU=1000000UL
 #	in the event that any of these files are changed. Specifiy
 #	library header files here as well as Makefile in case Makefile is
 #	sending defines parameters to C sources for compilation.
-DEPS = Makefile
+DEPS = Makefile seven_segment.h
 
 
 #	*OBJS are library/include objects based on included libraries.
 #	Have an entry for each C library file here.
-OBJS = $(TARGET).o
+OBJS = $(TARGET).o seven_segment.o
 
 
 #	CC specifies the C compiler.
@@ -66,19 +66,23 @@ OBJS = $(TARGET).o
 CC     = avr-gcc
 CFLAGS = -Os -Wall -I. -g -mmcu=$(MCU)
 
+# Default target: just compile
+all: $(TARGET).elf
+
+.PHONY: hex
+hex: $(TARGET).hex
 
 #	Send hex data to AVR, and report size info from elf binary
+.PHONY: flash
 flash: $(TARGET).hex $(TARGET).elf
 	avrdude $(AVRDUDEFLAGS) -U $<
-	avr-size -C --mcu=$(MCU) $(TARGET).elf
-
 
 #	Generate hex file from elf binary. The elf binary is chosen
 #	over the standard ".bin" binary as it contains information
 #	needed by avr-size for size reporting.
 $(TARGET).hex: $(TARGET).elf
 	avr-objcopy -O ihex -j .text -j .data $< $@
-
+	avr-size -C --mcu=$(MCU) $(TARGET).elf
 
 #	Compile elf binary from all object files
 $(TARGET).elf: $(OBJS)
