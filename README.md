@@ -5,5 +5,5 @@ A simple thermometer with an ATtiny84 driving two multiplexed seven segment disp
 The MCU is assumed to be running at 1MHz.
 
 # TODO
-[ ] Add schematic
-[ ] Add photos
+- Add schematic
+- Add photos
